@@ -23,6 +23,11 @@ logging:
 github:
   auth:
     type: ${GITHUB_AUTH_TYPE:ACTIONS}  # ACTIONS, PAT, APP
+  app:
+    id: ${GITHUB_APP_ID:}
+    private-key-path: ${GITHUB_APP_PRIVATE_KEY_PATH:}
+  webhook:
+    secret: ${GITHUB_WEBHOOK_SECRET:}
 
 # AI Configuration (Gemini)
 gemini:
