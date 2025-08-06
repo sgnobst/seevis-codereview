@@ -1,0 +1,4 @@
+rootProject.name = 'github-code-reviewer'
+
+// Gradle 성능 최적화
+enableFeaturePreview('TYPESAFE_PROJECT_ACCESSORS')

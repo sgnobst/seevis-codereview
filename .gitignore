@@ -1,0 +1,76 @@
+# Gradle
+.gradle/
+build/
+\!gradle/wrapper/gradle-wrapper.jar
+\!**/src/main/**/build/
+\!**/src/test/**/build/
+
+# IDE
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+\!**/src/main/**/out/
+\!**/src/test/**/out/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Eclipse
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+bin/
+\!**/src/main/**/bin/
+\!**/src/test/**/bin/
+
+# Logs
+logs/
+*.log
+
+# OS
+Thumbs.db
+
+# Package Files
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# Environment Variables
+.env
+.env.local
+.env.*.local
+
+# Sensitive Information
+*.pem
+*.key
+*.crt
+*.p12
+*.jks
+
+# Test Coverage
+jacoco.exec
+coverage/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.bak
+
+# Application specific
+application-local.yml
+application-*.local.yml
+secrets.yml
+EOF < /dev/null

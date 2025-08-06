@@ -1,0 +1,93 @@
+spring:
+  application:
+    name: github-code-reviewer
+  main:
+    web-application-type: none  # CLI mode, no web server
+    banner-mode: console
+    lazy-initialization: false
+
+logging:
+  level:
+    root: INFO
+    com.seevis.codereview: DEBUG
+    org.kohsuke.github: WARN
+    com.theokanning.openai: INFO
+  pattern:
+    console: "%d{HH:mm:ss.SSS} [%thread] %highlight(%-5level) %cyan(%logger{36}) - %msg%n"
+  file:
+    name: logs/code-review.log
+    max-size: 10MB
+    max-history: 5
+
+# GitHub Configuration
+github:
+  auth:
+    type: ${GITHUB_AUTH_TYPE:ACTIONS}  # ACTIONS, PAT, APP
+
+# AI Configuration (Gemini)
+gemini:
+  model: ${GEMINI_MODEL:gemini-1.5-flash}  # Options: gemini-1.5-flash, gemini-1.5-pro
+  temperature: ${GEMINI_TEMPERATURE:0.3}
+  max-tokens: ${GEMINI_MAX_TOKENS:2048}
+  timeout-seconds: 60
+
+# Code Review Configuration
+code-review:
+  # Maximum number of files to review in a single PR
+  max-files: ${MAX_FILES_TO_REVIEW:50}
+  
+  # Maximum file size to review (in KB)
+  max-file-size-kb: ${MAX_FILE_SIZE_KB:500}
+  
+  # Maximum comments to post per review
+  max-comments-per-review: ${MAX_COMMENTS:20}
+  
+  # File extensions to review
+  file-extensions:
+    - .java
+    - .kt
+    - .js
+    - .ts
+    - .jsx
+    - .tsx
+    - .py
+    - .go
+    - .rs
+    - .cpp
+    - .c
+    - .cs
+    - .rb
+    - .php
+    - .swift
+    - .scala
+    - .gradle
+    - .xml
+    - .yml
+    - .yaml
+    - .properties
+    - .json
+    - .sql
+    - .sh
+    - .dockerfile
+    
+  # Patterns to exclude from review
+  exclude-patterns:
+    - "**/generated/**"
+    - "**/build/**"
+    - "**/target/**"
+    - "**/dist/**"
+    - "**/node_modules/**"
+    - "**/*.min.js"
+    - "**/*.min.css"
+    - "**/package-lock.json"
+    - "**/yarn.lock"
+    - "**/gradle.lock"
+    - "**/.idea/**"
+    - "**/.vscode/**"
+    - "**/vendor/**"
+
+# Application timeouts
+timeouts:
+  github-api: 30
+  ai-api: 60
+  total-review: 300

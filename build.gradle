@@ -1,0 +1,129 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.2.0'
+    id 'io.spring.dependency-management' version '1.1.4'
+}
+
+group = 'com.seevis'
+version = '1.0.0'
+sourceCompatibility = '17'
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // Spring Boot
+    implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    
+    // GitHub API
+    implementation 'org.kohsuke:github-api:1.318'
+    
+    // Google Gemini API (using REST API - simpler than Vertex AI)
+    // No special dependencies needed, using Spring's RestTemplate
+    
+    // HTTP Client for API calls
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+    implementation 'com.squareup.okhttp3:okhttp:4.12.0'
+    
+    // JSON 처리
+    implementation 'com.fasterxml.jackson.core:jackson-databind'
+    
+    // JWT for GitHub App (필요시)
+    implementation 'com.auth0:java-jwt:4.4.0'
+    
+    // Lombok
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    
+    // 로깅
+    implementation 'net.logstash.logback:logstash-logback-encoder:7.4'
+    
+    // Swagger/OpenAPI 3.0
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0'
+    
+    // 테스트
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.mockito:mockito-core'
+    testImplementation 'org.assertj:assertj-core'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
+
+// GitHub Actions에서 사용할 실행 task
+task runReview(type: JavaExec) {
+    group = 'application'
+    description = 'Run code review for PR'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'com.seevis.codereview.GitHubCodeReviewerApplication'
+    
+    // 환경 변수 전달
+    environment = System.getenv()
+    
+    // JVM 옵션
+    jvmArgs = ['-Xmx2g', '-XX:+UseG1GC']
+}
+
+// 로컬 테스트용 task
+task localTest(type: JavaExec) {
+    group = 'application'
+    description = 'Test code review locally'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'com.seevis.codereview.GitHubCodeReviewerApplication'
+    
+    // 로컬 테스트용 환경 변수 (실제 값으로 변경 필요)
+    environment 'PR_NUMBER', '1'
+    environment 'GITHUB_TOKEN', 'your-token-here'
+    environment 'GEMINI_API_KEY', 'your-gemini-api-key-here'
+    environment 'GITHUB_REPOSITORY', 'owner/repo'
+    
+    standardInput = System.in
+}
+
+// Swagger UI를 위한 웹 서버 실행 task
+task runWeb(type: JavaExec) {
+    group = 'application'
+    description = 'Run application with Swagger UI'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'com.seevis.codereview.GitHubCodeReviewerWebApplication'
+    
+    // Spring Profile 설정
+    args = ['--spring.profiles.active=web', '--spring.main.web-application-type=servlet']
+    
+    // 환경 변수 설정 (테스트용)
+    environment 'GITHUB_TOKEN', System.getenv('GITHUB_TOKEN') ?: 'your-token-here'
+    environment 'GEMINI_API_KEY', System.getenv('GEMINI_API_KEY') ?: 'your-gemini-api-key-here'
+    environment 'GITHUB_REPOSITORY', System.getenv('GITHUB_REPOSITORY') ?: 'owner/repo'
+    environment 'PR_NUMBER', '0'  // 웹 모드에서는 필요 없음
+    
+    // JVM 옵션
+    jvmArgs = ['-Xmx1g', '-Dweb.mode=true']
+    
+    standardInput = System.in
+}
+
+// JAR 빌드 설정
+jar {
+    enabled = false
+}
+
+bootJar {
+    archiveBaseName = 'github-code-reviewer'
+    archiveVersion = '1.0.0'
+    mainClass = 'com.seevis.codereview.GitHubCodeReviewerApplication'
+}
+
+// Spring Boot 메인 클래스 지정
+springBoot {
+    mainClass = 'com.seevis.codereview.GitHubCodeReviewerApplication'
+}

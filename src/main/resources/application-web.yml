@@ -1,0 +1,43 @@
+spring:
+  main:
+    web-application-type: servlet  # Web server enabled
+    banner-mode: console
+  
+server:
+  port: 8080
+  servlet:
+    context-path: /
+
+# Swagger/OpenAPI Configuration
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+    try-it-out-enabled: true
+    operations-sorter: method
+    tags-sorter: alpha
+    display-request-duration: true
+    default-models-expand-depth: 1
+    default-model-expand-depth: 1
+  packages-to-scan: com.seevis.codereview.controller
+  paths-to-match: /api/**
+  
+# CORS Configuration (for local development)
+management:
+  endpoints:
+    web:
+      cors:
+        allowed-origins: "*"
+        allowed-methods: GET, POST, PUT, DELETE, OPTIONS
+        allowed-headers: "*"
+        
+# Logging for web mode
+logging:
+  level:
+    root: INFO
+    com.seevis.codereview: DEBUG
+    org.springframework.web: DEBUG
+    springfox.documentation: WARN
